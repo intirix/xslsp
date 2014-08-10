@@ -31,11 +31,28 @@ public class HtmlTemplateEngine
 	private final StrLookup varLookup;
 
 	private XsltEngine xsltEngine = new XsltEngine();
+	
+	private HtmlFilenameTranslator htmlFilenameTranslator = new DefaultHtmlFilenameTranslator();
 
 	public HtmlTemplateEngine( ResourceBundle bundle )
 	{
 		varLookup = new ResourceBundleLookup( bundle );
 	}
+	
+	
+
+	public HtmlFilenameTranslator getHtmlFilenameTranslator() {
+		return htmlFilenameTranslator;
+	}
+
+
+
+	public void setHtmlFilenameTranslator(
+			HtmlFilenameTranslator htmlFilenameTranslator) {
+		this.htmlFilenameTranslator = htmlFilenameTranslator;
+	}
+
+
 
 	/**
 	 * Create the page bean
@@ -92,7 +109,7 @@ public class HtmlTemplateEngine
 			}
 			else
 			{
-				final String htmlFilename = getHtmlFilename( uri );
+				final String htmlFilename = htmlFilenameTranslator.getHtmlFilename( uri );
 				log.debug( "Rendering " + uri + " with " + htmlFilename );
 
 				final InputStream xslIs = getClass().getResourceAsStream( htmlFilename );
@@ -223,30 +240,5 @@ public class HtmlTemplateEngine
 		return className;
 	}
 
-	/**
-	 * Get the filename of the html document
-	 * @param uri
-	 * @return
-	 */
-	private String getHtmlFilename( String uri )
-	{
-		String filename = uri;
-		if ( filename.endsWith( "/" ) )
-		{
-			filename = filename + "index.html";
-		}
-
-		if ( !filename.startsWith( "/" ) )
-		{
-			filename = '/' + filename;
-		}
-
-		filename = filename.replace( ".phtml", ".xsl" );
-		filename = filename.replace( ".html", ".xsl" );
-
-		filename = "/html/pages" + filename;
-
-		return filename;
-	}
 
 }
