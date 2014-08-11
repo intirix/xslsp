@@ -6,11 +6,51 @@ import java.io.OutputStream;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+/**
+ * XSLT Transformation engine
+ * 
+ * We encapsulate the XSLT transformation into its own class.
+ * @author jeff
+ *
+ */
 public class XsltEngine
 {
+
+	/**
+	 * The uri resolver when xslt files include other files
+	 */
+	private URIResolver resolver;
+	
+	
+	/**
+	 * Get the file resolver
+	 * @return
+	 */
+	public URIResolver getResolver() {
+		return resolver;
+	}
+
+
+
+	/**
+	 * Change the URI resolver that gets used when on XSLT file includes another XSLT file
+	 * @param resolver
+	 */
+	public void setResolver(URIResolver resolver) {
+		this.resolver = resolver;
+	}
+
+	/**
+	 * Create an instance using the default uri resolver
+	 */
+	public XsltEngine()
+	{
+		setResolver( new ClasspathURIResolver() );
+	}
 
 
 	/**
@@ -28,10 +68,10 @@ public class XsltEngine
 		final StreamResult xmlResult = new StreamResult( xmlOut );
 		
 		final TransformerFactory transFact = javax.xml.transform.TransformerFactory.newInstance();
-		transFact.setURIResolver( new ClasspathURIResolver() );
+		transFact.setURIResolver( getResolver() );
 
 		final Transformer trans = transFact.newTransformer( xslSource );
-		trans.setURIResolver( new ClasspathURIResolver() );
+		trans.setURIResolver( getResolver() );
 
 		trans.transform( xmlSource, xmlResult );
 

@@ -12,10 +12,29 @@ import javax.xml.transform.stream.StreamSource;
  */
 public class ClasspathURIResolver implements URIResolver
 {
-
-	public Source resolve( String arg0, String arg1 ) throws TransformerException
+	
+	private String basePath;
+	
+	/**
+	 * Create the resolver using a custom base path
+	 * @param basePath
+	 */
+	public ClasspathURIResolver( String basePath )
 	{
-		return new StreamSource( getClass().getResourceAsStream( "/html/xsl/" + arg0 ) );
+		this.basePath = basePath;
+	}
+	
+	/**
+	 * Create resolver using the default base path
+	 */
+	public ClasspathURIResolver()
+	{
+		this( "/html/xsl" );
+	}
+
+	public Source resolve( String href, String base ) throws TransformerException
+	{
+		return new StreamSource( getClass().getResourceAsStream( basePath + '/' + href ) );
 	}
 
 }
