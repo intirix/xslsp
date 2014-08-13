@@ -25,7 +25,7 @@ public class TestHtmlTemplateEngine
 	@Test
 	public void testMissingXsl() throws Exception
 	{
-		final HtmlTemplateEngine engine = new HtmlTemplateEngine(null);
+		final HtmlTemplateEngine engine = new HtmlTemplateEngine();
 		final ByteArrayOutputStream buffer = new ByteArrayOutputStream( 1024 );
 		try
 		{
@@ -41,7 +41,7 @@ public class TestHtmlTemplateEngine
 	@Test
 	public void testgetPageBeanClassName()
 	{
-		final HtmlTemplateEngine engine = new HtmlTemplateEngine(null);
+		final HtmlTemplateEngine engine = new HtmlTemplateEngine();
 		Assert.assertEquals( "com.intirix.openmm.server.ui.html.pages.html.IndexBeanFactory", engine.getPageBeanClassName( "/html/index.html" ) );
 		Assert.assertEquals( "com.intirix.openmm.server.ui.html.pages.html.test.IndexBeanFactory", engine.getPageBeanClassName( "/html/test/index.html" ) );
 		Assert.assertEquals( "com.intirix.openmm.server.ui.html.pages.html.test.FileBeanFactory", engine.getPageBeanClassName( "/html/test/file.html" ) );

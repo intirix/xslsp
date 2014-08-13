@@ -2,7 +2,6 @@ package com.intirix.xslsp.html;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,36 +26,19 @@ public class HtmlTemplateEngineServlet extends HttpServlet
 
 	private final Logger log = Logger.getLogger( HtmlTemplateEngineServlet.class );
 
-
-	/**
-	 * resource bundle
-	 */
-	private final ResourceBundle bundle = ResourceBundle.getBundle( "OpenmmServerUIBundle" );
-
 	/**
 	 * Template engine
 	 */
 	private final HtmlTemplateEngine htmlEngine;
 
-//	private PostActionEngine actionEngine;
-
 	public HtmlTemplateEngineServlet()
 	{
-		htmlEngine = new HtmlTemplateEngine( bundle );
-//		actionEngine = runtime.getActionEngine();
+		htmlEngine = new HtmlTemplateEngine();
 	}
 
 	@Override
 	protected void doGet( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException
 	{
-		/*
-		if ( config.getBaseUrl().length() == 0 )
-		{
-			config.setBaseUrl( req.getRequestURL().toString().replaceFirst( "/html.*", "" ) );
-			config.saveToUserDir();
-		}
-		*/
-		
 		
 		final String uri = req.getRequestURI().replaceFirst( "^" + req.getServletPath(), "" );
 
@@ -89,24 +71,6 @@ public class HtmlTemplateEngineServlet extends HttpServlet
 	{
 		try
 		{
-			final String action = req.getParameter( "action" );
-			/*
-			final PostAction actionObject = actionEngine.getAction( action );
-			PostActionResult actionResult = null;
-
-			// if the action object exists, then process the action
-			if ( actionObject != null )
-			{
-				actionResult = actionObject.processAction( req );
-				
-				if ( actionResult != null && actionResult.getRedirectUrl() != null )
-				{
-					resp.sendRedirect( actionResult.getRedirectUrl() );
-					return;
-				}
-			}
-
-*/
 
 			final String uri = req.getRequestURI().replaceFirst( "^" + req.getServletPath(), "" );
 
@@ -115,20 +79,12 @@ public class HtmlTemplateEngineServlet extends HttpServlet
 
 			try
 			{
-				bean = htmlEngine.createPageBean( uri, req, null );
+				bean = htmlEngine.createPageBean( uri, req, req.getAttribute( "postResult" ) );
 			}
 			catch ( ClassNotFoundException e )
 			{
 				// ignore
 			}
-
-			// transfer the action message to the data bean
-			/*
-			if ( actionResult != null && actionObject != null )
-			{
-				bean.setActionMessage( actionResult.getActionMessage() );
-			}
-			*/
 
 			// render the page
 			htmlEngine.renderPage( uri, bean, resp.getOutputStream() );

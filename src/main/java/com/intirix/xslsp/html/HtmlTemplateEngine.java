@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +13,6 @@ import org.apache.commons.lang.text.StrLookup;
 import org.apache.log4j.Logger;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
-
-import com.intirix.xslsp.ResourceBundleLookup;
 
 /**
  * Xsl/Html template engine that reads files out of the classpath
@@ -27,18 +24,29 @@ public class HtmlTemplateEngine
 
 	private final Logger log = Logger.getLogger( HtmlTemplateEngine.class );
 
-	private final StrLookup varLookup;
+	private StrLookup varLookup;
 
 	private XsltEngine xsltEngine = new XsltEngine();
 	
 	private HtmlFilenameTranslator htmlFilenameTranslator = new DefaultHtmlFilenameTranslator();
 
-	public HtmlTemplateEngine( ResourceBundle bundle )
+	public HtmlTemplateEngine()
 	{
-		varLookup = new ResourceBundleLookup( bundle );
 	}
 	
 	
+
+	public StrLookup getVarLookup() {
+		return varLookup;
+	}
+
+
+
+	public void setVarLookup(StrLookup varLookup) {
+		this.varLookup = varLookup;
+	}
+
+
 
 	public HtmlFilenameTranslator getHtmlFilenameTranslator() {
 		return htmlFilenameTranslator;
@@ -121,7 +129,10 @@ public class HtmlTemplateEngine
 				final TransformationPipeline pipeline = new TransformationPipeline();
 				pipeline.addStep( new XsltTransformation( xsltEngine, htmlFilename ) );
 				pipeline.addStep( new XsltTransformation( xsltEngine, "/html/xsl/taglib.xsl" ) );
-				pipeline.addStep( new VarReplacementStep( varLookup ) );
+				if ( varLookup != null )
+				{
+					pipeline.addStep( new VarReplacementStep( varLookup ) );
+				}
 				pipeline.transform( new ByteArrayInputStream( buffer.toByteArray() ), out);
 
 			}
